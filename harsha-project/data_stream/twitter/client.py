@@ -7,7 +7,7 @@ from twitter import OAuth, TwitterStream
 from .exceptions import UserNotFoundException
 
 
-class Twitter(object):
+class Tweet(object):
     def __init__(self, tweet):
         self.tweet = tweet
 
@@ -106,7 +106,7 @@ class TwitterStream(object):
             else:
                 stream = self._get_iterator()
             for tweet in stream:
-                tweets.append(Twitter(json.dumps(tweet)))
+                tweets.append(Tweet(json.dumps(tweet)))
                 if count - 1 < 0:
                     break
             return tweets
@@ -116,4 +116,5 @@ class TwitterStream(object):
 
 class TwitterClient(TwitterStream):
     def get(self):
+
         pass
