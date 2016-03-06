@@ -82,11 +82,12 @@ class TranslatorInterface(object):
         return
 
 
+
 class SerializerInterface(object):
     __metaclass__ = abc.ABCMeta
-    serailizers = () #SerializerMode
-    exclude= ()
-    include= ()
+    serailizers = ()
+    exclude = ()
+    include = ()
 
     def __new__(cls, *args, **kwargs):
         cls.serializer_set = (cls.serializer + cls.include) - cls.exclude
@@ -101,9 +102,8 @@ class SerializerInterface(object):
         return
 
     @abc.abstractmethod
-    def serailize(self, *args, **kwargs):
+    def serialize(self, *args, **kwargs):
         return
-
 
     def special_serialize(self, mode, **kwargs):
         try:
@@ -116,7 +116,8 @@ class SerializerInterface(object):
             print e
             raise e
 
-    def get_serialzers(self):
+    @staticmethod
+    def get_serializers(self):
         return self.serializer_set
 
     def __get_method(self, method_name):

@@ -3,51 +3,10 @@ __author__ = 'harsha-94'
 import json
 
 from twitter import OAuth, TwitterStream
-
-from .exceptions import UserNotFoundException
-
-
-class Tweet(object):
-    def __init__(self, tweet):
-        self.tweet = tweet
-
-    @staticmethod
-    def text(self):
-        """Returns the text of a tweet.
-
-        Returns:
-            unicode formatted string.
-        """
-        return self.tweet.get("text", "")
-
-    @staticmethod
-    def hashtag(self):
-        """ Returns a list of hashtags associated with the tweet.
-
-        Returns:
-            List of hashtags.
-
-        """
-        return self.tweet.get("entities").get("hashtags", [])
-
-    @staticmethod
-    def username(self):
-        """Returns the user name of the person or entity that published the tweet.
-        Raises UserNotFoundException if username is not present in the tweet.
-
-        Returns:
-            unicode formatted string    .
-        """
-        try:
-            self.username = self.tweet.get("user").get("name", False)
-            if not self.username:
-                raise AttributeError
-            return self.username
-        except AttributeError:
-            raise UserNotFoundException
+from tweet import Tweet
 
 
-class TwitterStream(object):
+class TwitterStreamConnection(object):
     def __init__(self):
         access_token = ""
         access_token_secret = ""
@@ -69,24 +28,24 @@ class TwitterStream(object):
         except Exception as e:
             raise e
 
-    def _get_filter(self, filter, **kwargs):
+    def _get_filter(self, filters, **kwargs):
         """Returns a filtered twitter stream iterator object.
 
         Args:
-            filter: String containing coma or whitespace seperated keywords.
+            filters: String containing coma or whitespace seperated keywords.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
             Twitter stream filtered object
         """
         try:
-            return TwitterStream(auth=self.oauth).statuses.filter(filter=filter,
+            return TwitterStream(auth=self.oauth).statuses.filter(filter=filters,
                                                                   language=kwargs.get("language", "")
                                                                   )
         except Exception as e:
             raise e
 
-    def get_tweets(self, count=1, lang="en", **kwargs):
+    def get_tweets(self, count, lang, **kwargs):
         """ Get's tweets from twitter and returns them in a list. By default returns a single tweet
           in english. To change language, pass the language code in the parameters.
 
@@ -101,20 +60,21 @@ class TwitterStream(object):
         """
         tweets = []
         try:
-            if "filter" in kwargs:
-                stream = self._get_filter(kwargs["filter"], kwargs)
+            if "filters" in kwargs:
+                stream = self._get_filter(kwargs["filters"], kwargs)
             else:
                 stream = self._get_iterator()
             for tweet in stream:
                 tweets.append(Tweet(json.dumps(tweet)))
-                if count - 1 < 0:
+                if count - 1 <= 0:
                     break
             return tweets
         except Exception as e:
             raise e
 
 
-class TwitterClient(TwitterStream):
-    def get(self):
-
-        pass
+class TwitterClient(TwitterStreamConnection):
+    def get(self, validated_data):
+        count = validated_data.get("count", 1)
+        language = validated_data.get("lang", "en")
+        return self.get_tweets(count, language, validated_data)

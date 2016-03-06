@@ -5,8 +5,7 @@ import enum
 class DataInputMethod(enum.Enum):
     TWITTER = 10
     FACEBOOK = 20
-    WEBPAGE = 30
-    FILESYSTEM = 40
+    FILESYSTEM = 30
 
 
 serializer_methods = {
@@ -17,8 +16,19 @@ serializer_methods = {
 
 
 TwitterAccountDetails = {
-    "access_token" :"ENTER YOUR ACCESS TOKEN",
+    "access_token": "ENTER YOUR ACCESS TOKEN",
     "access_token_secret": "ENTER YOUR ACCESS TOKEN SECRET",
     "consumer_key": "ENTER YOUR API KEY",
     "consumer_secret": "ENTER YOUR API SECRET"
 }
+
+DATABASE = {
+    "main": {
+        "host": "",
+        "username": "",
+        "password": "",
+        "db_name": "",
+        "engine": "sqlite"
+    }
+}
+
